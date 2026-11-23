@@ -30,6 +30,11 @@ on:
         default: 'false'
         type: choice
         options: ['false', 'true']
+      pat:
+        description: 临时用这把 token 代替仓库 secret GH_ACTIONS_PAT（留空=用 secret；只在本次运行内有效）
+        required: false
+        default: ''
+        type: string
 permissions:
   contents: read
 concurrency:

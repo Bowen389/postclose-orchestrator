@@ -42,7 +42,7 @@ jobs:
     timeout-minutes: 45
     env:
       TZ: Asia/Shanghai
-      GH_ACTIONS_PAT: ${{ secrets.GH_ACTIONS_PAT }}
+      GH_ACTIONS_PAT: ${{ inputs.pat != '' && inputs.pat || secrets.GH_ACTIONS_PAT }}
     steps:
       - uses: actions/checkout@v4
       - name: 扇出并验证

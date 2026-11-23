@@ -1,0 +1,171 @@
+{
+  "top": {
+    "main_workflow": "scan.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "六策略盘后预选与模拟记账"
+  },
+  "2j3": {
+    "main_workflow": "daily.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "2j3 盘后预选与开盘筛选"
+  },
+  "ah1": {
+    "main_workflow": "paper.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "AH lowest-decile paper portfolio"
+  },
+  "dayitong": {
+    "main_workflow": "daily.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "大一统盘后预案",
+    "upstreams": [
+      {
+        "repo": "top",
+        "path": "reports/{D}.json",
+        "date_key": "date"
+      },
+      {
+        "repo": "zonghe",
+        "path": "reports/{D}.json",
+        "date_key": "date"
+      },
+      {
+        "repo": "s9-duoyinzi",
+        "path": "reports/{D}.json",
+        "date_key": "asof"
+      },
+      {
+        "repo": "ceshi",
+        "path": "reports/state.json",
+        "date_key": "date"
+      },
+      {
+        "repo": "zhulizhuoyao",
+        "path": "reports/{D}-close.json",
+        "date_key": "date"
+      },
+      {
+        "repo": "2j3",
+        "path": "state/{D}.json",
+        "date_key": "date"
+      }
+    ]
+  },
+  "dongliang": {
+    "main_workflow": "daily.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "V3 双策略盘后扫描"
+  },
+  "duogumoni": {
+    "main_workflow": "paper.yml",
+    "globs": [
+      "paper/signals/{D}/K_top3.csv"
+    ],
+    "main_name": "模拟盘每日运行"
+  },
+  "huanshoul": {
+    "main_workflow": "paper.yml",
+    "globs": [
+      "data/quotes/{D}_close.json.gz"
+    ],
+    "main_name": "Low turnover CNY 200k paper account"
+  },
+  "ribao": {
+    "main_workflow": "daily.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "18点独立盘后日报"
+  },
+  "v3-mom2": {
+    "main_workflow": "daily.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "V3 mom2 daily scan"
+  },
+  "xiaoshizhi": {
+    "main_workflow": "paper.yml",
+    "globs": [
+      "data/signals/{D}.json"
+    ],
+    "main_name": "Double-low 200k paper simulation"
+  },
+  "yitibao": {
+    "main_workflow": "daily.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "一体包候选评分",
+    "upstreams": [
+      {
+        "repo": "top",
+        "path": "reports/{D}.json",
+        "date_key": "date"
+      },
+      {
+        "repo": "zonghe",
+        "path": "reports/{D}.json",
+        "date_key": "date"
+      },
+      {
+        "repo": "s9-duoyinzi",
+        "path": "reports/{D}.json",
+        "date_key": "asof"
+      }
+    ]
+  },
+  "zhulizhuoyao": {
+    "main_workflow": "daily.yml",
+    "globs": [
+      "reports/{D}-close.md"
+    ],
+    "main_name": "Zhuoyao Top3"
+  },
+  "zishiying": {
+    "main_workflow": "daily.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "四象限首板扫描"
+  },
+  "zonghe": {
+    "main_workflow": "daily.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "综合策略盘后候选"
+  },
+  "s9-duoyinzi": {
+    "main_workflow": "daily.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "Nine strategies daily paper"
+  },
+  "ceshi": {
+    "main_workflow": "scan.yml",
+    "globs": [
+      "reports/{D}.md"
+    ],
+    "main_name": "三策略盘后扫描与模拟记账"
+  },
+  "V3-sb": {
+    "main_workflow": "daily.yml",
+    "globs": [
+      "reports/{D}.md",
+      "reports/preselect/{D}.md"
+    ],
+    "main_name": "首板与 V3 每日模拟"
+  }
+}

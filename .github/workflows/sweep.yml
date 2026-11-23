@@ -1,0 +1,60 @@
+name: 盘后扫描编排（一键扇出 17 个包）
+# 为什么存在：2026-11-20 与 11-23 实测，本账号 GitHub Actions 的 on.schedule 被整段延迟 6~10 小时，
+# 各包自带的 watchdog 也受同一机制支配（且 11-20 那版还把 dispatch 端点写成了 /dispatch，单数 → 404）。
+# 这里只做两件事：谁叫它，它就去看哪些包缺当日产物、缺的立刻 workflow_dispatch，并且回查 run 是否真的创建。
+on:
+  schedule:
+    - cron: '0 9 * * 1-5'    # 北京 17:00 盘后第一枪
+    - cron: '30 9 * * 1-5'   # 北京 17:30
+    - cron: '0 10 * * 1-5'   # 北京 18:00
+    - cron: '30 10 * * 1-5'  # 北京 18:30
+    - cron: '0 13 * * 1-5'   # 北京 21:00 当晚收口
+    - cron: '0 1 * * 2-6'    # 北京 09:00 开盘前补前一天（缺档的最后一次机会）
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 目标交易日 YYYY-MM-DD（留空=按北京时间自动判定，开盘前会自动回溯上一交易日）
+        required: false
+        default: ''
+      only:
+        description: 只跑这些仓，逗号分隔（留空=全部 17 个）
+        required: false
+        default: ''
+      downstream_wait:
+        description: 第二波（dayitong/yitibao）等上游落盘的上限秒数；0=不等
+        required: false
+        default: '1800'
+      force:
+        description: 已有当日产物也重新触发
+        required: false
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
+permissions:
+  contents: read
+concurrency:
+  group: postclose-orchestrator
+  cancel-in-progress: false
+jobs:
+  sweep:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      TZ: Asia/Shanghai
+      GH_ACTIONS_PAT: ${{ secrets.GH_ACTIONS_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 扇出并验证
+        run: |
+          args=()
+          if [ -n "${{ inputs.date }}" ];      then args+=(--date "${{ inputs.date }}"); fi
+          if [ -n "${{ inputs.only }}" ];      then args+=(--only "${{ inputs.only }}"); fi
+          if [ "${{ inputs.force }}" = "true" ]; then args+=(--force); fi
+          if [ -n "${{ inputs.downstream_wait }}" ]; then args+=(--downstream-wait "${{ inputs.downstream_wait }}"); fi
+          python3 -u scripts/sweep.py "${args[@]}"
+      - name: 缺 PAT 时给出可执行的提示
+        if: failure()
+        run: |
+          echo "::error::编排失败。先看上面的表；若整段是「缺 GH_ACTIONS_PAT」，请到 Settings → Secrets → Actions 新建 GH_ACTIONS_PAT（fine-grained，勾选这 17 个仓的 Actions: Read and write + Contents: Read and write）。"
+          echo "临时手点也行：每个仓 Actions → 「${{ github.workflow }}」对应的包 → Run workflow。"
